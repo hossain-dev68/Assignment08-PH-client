@@ -7,6 +7,14 @@ import { Button } from "@/components/ui/button"
 import { cn } from "cn"
 import { authClient } from "@/lib/auth-client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 const navLinks = [
   { label: "Home", href: "/", active: true },
@@ -18,6 +26,10 @@ const navLinks = [
 
 export function Navbar() {
   const { data: session } = authClient.useSession()
+
+  const handleSignOut = () => {
+    authClient.signOut();
+  }
 
   const user = session?.user;
   const [menuOpen, setMenuOpen] = React.useState(false)
@@ -50,27 +62,45 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <Avatar>
-            <AvatarImage referrerPolicy="no-referrer" src={user?.image as string} />
-            <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <Link href={'/signin'}>
-            <Button
-              type="button"
-              variant="ghost"
-              className="hidden h-9 rounded-full px-4 text-white hover:bg-white/10 hover:text-white sm:inline-flex"
-            >
-              Sign In
-            </Button>
-          </Link>
-          <Link href={'/signup'}>
-            <Button
-              type="button"
-              className="h-9 rounded-full bg-gradient-to-r from-violet-600 to-purple-500 px-5 font-semibold text-white shadow-md shadow-violet-500/30 hover:opacity-90"
-            >
-              Sign Up
-            </Button>
-          </Link>
+          {
+            user ? <Popover>
+              <PopoverTrigger render={<Avatar>
+                <AvatarImage referrerPolicy="no-referrer" src={user?.image as string} />
+                <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
+              </Avatar>}>
+
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverHeader>
+                  <PopoverTitle>{user?.name}</PopoverTitle>
+                  <PopoverDescription>{user?.email}</PopoverDescription>
+                  <Button onClick={handleSignOut} variant={'destructive'}>SignOut</Button>
+                </PopoverHeader>
+              </PopoverContent>
+            </Popover> : <>
+              <Link href={'/signin'}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="hidden h-9 rounded-full px-4 text-white hover:bg-white/10 hover:text-white sm:inline-flex"
+                >
+                  Sign In
+                </Button>
+              </Link>
+              <Link href={'/signup'}>
+                <Button
+                  type="button"
+                  className="h-9 rounded-full bg-gradient-to-r from-violet-600 to-purple-500 px-5 font-semibold text-white shadow-md shadow-violet-500/30 hover:opacity-90"
+                >
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          }
+
+
+
+
           <button
             type="button"
             aria-label="Your profile"
