@@ -1,19 +1,18 @@
 "use client"
 
 import * as React from "react"
-import { Check, Heart, Image as ImageIcon, LayoutGrid, MapPin, Star, Users } from "lucide-react"
+import { Check, Image as ImageIcon, Star } from "lucide-react"
 import { cn } from "cn"
 
 import { AvailabilityCalendar } from "@/components/availability-calendar"
-import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   formatCapacity,
   formatLocation,
   formatPrice,
-  studioCategories,
   type Studio,
 } from "@/lib/studios"
+import Booking from "./booking/Booking"
 
 type StudioDetailViewProps = {
   studio: Studio
@@ -28,20 +27,15 @@ export function StudioDetailView({ studio }: StudioDetailViewProps) {
     (src) => typeof src === "string" && src.trim() !== ""
   )
   const [activeIndex, setActiveIndex] = React.useState(0)
-  const [favorite, setFavorite] = React.useState(false)
 
   const safeIndex = activeIndex < images.length ? activeIndex : 0
   const activeImage = images[safeIndex]
 
   const name = studio.name?.trim() || "Untitled studio"
   const formattedPrice = formatPrice(studio.price)
-  const priceAmount = formattedPrice?.replace(/\/hr$/, "")
   const location = formatLocation(studio.location)
   const capacityText = formatCapacity(studio.capacity)
   const category = studio.category?.trim() || null
-  const CategoryIcon =
-    studioCategories.find((entry) => entry.value === category)?.icon ??
-    LayoutGrid
 
   const numericRating = Number(studio.rating)
   const hasRating =
@@ -61,12 +55,6 @@ export function StudioDetailView({ studio }: StudioDetailViewProps) {
   if (capacityText) amenities.push(`Up to ${capacityText}`)
   if (location) amenities.push(`Located in ${location}`)
   if (formattedPrice) amenities.push("Book by the hour")
-
-  const scrollToAvailability = () => {
-    document
-      .getElementById("availability")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" })
-  }
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)] lg:gap-8">
@@ -124,96 +112,7 @@ export function StudioDetailView({ studio }: StudioDetailViewProps) {
       </div>
 
       {/* Summary */}
-      <div className="flex min-w-0 flex-col gap-4">
-        <div className="flex flex-col gap-2.5">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-            {name}
-          </h1>
-
-          {hasRating && (
-            <p className="flex items-center gap-1.5 text-sm">
-              <Star
-                aria-hidden
-                className="size-4 fill-amber-400 text-amber-400"
-              />
-              <span className="font-semibold text-slate-900">
-                {studio.rating}
-              </span>
-              {reviewCount !== undefined && reviewCount !== null && (
-                <span className="text-slate-500">
-                  ({reviewCount} review{reviewCount === 1 ? "" : "s"})
-                </span>
-              )}
-            </p>
-          )}
-        </div>
-
-        {formattedPrice && (
-          <p className="flex items-baseline gap-1.5">
-            <span className="text-3xl font-extrabold tracking-tight text-violet-600">
-              {priceAmount}
-            </span>
-            <span className="text-sm font-medium text-slate-500">/ hour</span>
-          </p>
-        )}
-
-        {location && (
-          <p className="flex items-center gap-2 text-sm text-slate-600">
-            <MapPin aria-hidden className="size-4 shrink-0 text-slate-400" />
-            {location}
-          </p>
-        )}
-
-        {(capacityText || category) && (
-          <ul className="flex flex-col gap-2.5">
-            {capacityText && (
-              <li className="flex items-center gap-2.5 text-sm text-slate-600">
-                <Users aria-hidden className="size-4 shrink-0 text-slate-400" />
-                Max {capacityText}
-              </li>
-            )}
-            {category && (
-              <li className="flex items-center gap-2.5 text-sm text-slate-600">
-                <CategoryIcon
-                  aria-hidden
-                  className="size-4 shrink-0 text-slate-400"
-                />
-                {category}
-              </li>
-            )}
-          </ul>
-        )}
-
-        <div className="flex items-center gap-2.5">
-          <Button
-            type="button"
-            onClick={scrollToAvailability}
-            className="h-11 flex-1 rounded-xl bg-violet-600 px-6 font-semibold text-white shadow-md shadow-violet-600/30 hover:bg-violet-700"
-          >
-            Book Now
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            aria-label={
-              favorite
-                ? `Remove ${name} from favorites`
-                : `Add ${name} to favorites`
-            }
-            aria-pressed={favorite}
-            onClick={() => setFavorite((current) => !current)}
-            className="h-11 w-11 rounded-xl border-slate-200 bg-white px-0 hover:bg-slate-50"
-          >
-            <Heart
-              aria-hidden
-              className={cn(
-                "size-5",
-                favorite ? "fill-red-500 text-red-500" : "text-slate-600"
-              )}
-            />
-          </Button>
-        </div>
-      </div>
+      <Booking studio={studio} />
 
       {/* Tabs */}
       <div className="min-w-0">

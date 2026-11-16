@@ -43,6 +43,7 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { toast, Toaster } from "@/components/ui/toast"
+import { HowItWorks } from "@/components/how-it-works"
 
 type ExtraField = {
   key: string
@@ -1006,6 +1007,11 @@ export default function CreateStudio() {
               {submitting ? "Creating Studio…" : "Create Studio"}
             </Button>
           </form>
+        </div>
+
+        {/* How It Works — same section as the home page */}
+        <div className="relative z-10">
+          <HowItWorks />
         </div>
       </main>
 

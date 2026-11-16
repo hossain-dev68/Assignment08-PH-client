@@ -20,18 +20,19 @@ const navLinks = [
   { label: "Home", href: "/", active: true },
   { label: "Explore", href: "/explore", active: false },
   { label: "All-Catagory", href: "/all-catagory", active: false },
-  { label: "How It Works", href: "/how-it-works", active: false },
+  { label: "Create Studio", href: "/create-studio", active: false },
   { label: "About", href: "/about", active: false },
 ]
 
 export function Navbar() {
   const { data: session } = authClient.useSession()
 
-  const handleSignOut = () => {
+  const user = session?.user;
+
+  
+   const handleSignOut = () => {
     authClient.signOut();
   }
-
-  const user = session?.user;
   const [menuOpen, setMenuOpen] = React.useState(false)
 
   return (
