@@ -5,16 +5,21 @@ import Link from "next/link"
 import { Menu, User, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "cn"
+import { authClient } from "@/lib/auth-client"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navLinks = [
   { label: "Home", href: "/", active: true },
-  { label: "Explore", href: "/explore",active: false },
-  { label: "All-Catagory",href: "/all-catagory",active: false},
-  { label: "How It Works", href: "/how-it-works",active: false },
-  { label: "About", href: "/about",active: false },
+  { label: "Explore", href: "/explore", active: false },
+  { label: "All-Catagory", href: "/all-catagory", active: false },
+  { label: "How It Works", href: "/how-it-works", active: false },
+  { label: "About", href: "/about", active: false },
 ]
 
 export function Navbar() {
+  const { data: session } = authClient.useSession()
+
+  const user = session?.user;
   const [menuOpen, setMenuOpen] = React.useState(false)
 
   return (
@@ -36,7 +41,7 @@ export function Navbar() {
               className={cn(
                 "relative text-sm text-white/70 transition-colors hover:text-white",
                 link.active &&
-                  "text-white after:absolute after:-bottom-2.5 after:left-0 after:h-0.5 after:w-full after:bg-white"
+                "text-white after:absolute after:-bottom-2.5 after:left-0 after:h-0.5 after:w-full after:bg-white"
               )}
             >
               {link.label}
@@ -45,22 +50,26 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <Avatar>
+            <AvatarImage referrerPolicy="no-referrer" src={user?.image as string} />
+            <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
+          </Avatar>
           <Link href={'/signin'}>
-          <Button
-            type="button"
-            variant="ghost"
-            className="hidden h-9 rounded-full px-4 text-white hover:bg-white/10 hover:text-white sm:inline-flex"
-          >
-            Sign In
-          </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="hidden h-9 rounded-full px-4 text-white hover:bg-white/10 hover:text-white sm:inline-flex"
+            >
+              Sign In
+            </Button>
           </Link>
           <Link href={'/signup'}>
-          <Button
-            type="button"
-            className="h-9 rounded-full bg-gradient-to-r from-violet-600 to-purple-500 px-5 font-semibold text-white shadow-md shadow-violet-500/30 hover:opacity-90"
-          >
-            Sign Up
-          </Button>
+            <Button
+              type="button"
+              className="h-9 rounded-full bg-gradient-to-r from-violet-600 to-purple-500 px-5 font-semibold text-white shadow-md shadow-violet-500/30 hover:opacity-90"
+            >
+              Sign Up
+            </Button>
           </Link>
           <button
             type="button"
