@@ -45,6 +45,7 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <Link href={'/signin'}>
           <Button
             type="button"
             variant="ghost"
@@ -52,12 +53,15 @@ export function Navbar() {
           >
             Sign In
           </Button>
+          </Link>
+          <Link href={'/signup'}>
           <Button
             type="button"
             className="h-9 rounded-full bg-gradient-to-r from-violet-600 to-purple-500 px-5 font-semibold text-white shadow-md shadow-violet-500/30 hover:opacity-90"
           >
             Sign Up
           </Button>
+          </Link>
           <button
             type="button"
             aria-label="Your profile"
