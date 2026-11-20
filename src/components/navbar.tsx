@@ -21,7 +21,7 @@ const navLinks = [
   { label: "Explore", href: "/explore", active: false },
   { label: "All-Catagory", href: "/all-catagory", active: false },
   { label: "Create Studio", href: "/create-studio", active: false },
-  { label: "About", href: "/about", active: false },
+  { label: "Booking", href: "/booking", active: false },
 ]
 
 export function Navbar() {

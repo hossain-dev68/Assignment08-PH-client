@@ -12,7 +12,6 @@ import {
     studioCategories,
     type Studio,
 } from "@/lib/studios"
-import Link from "next/link"
 import { authClient } from "@/lib/auth-client"
 import { Input } from "../ui/input"
 
@@ -27,28 +26,67 @@ const Booking = ({ studio }: BookingProps) => {
 
     const user = session?.user;
 
-    const handleBooking = async (e) => {
+    const [isBooking, setIsBooking] = React.useState(false)
+    const [bookingError, setBookingError] = React.useState<string | null>(null)
+
+    const handleBooking = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const departureDate = e.target.departureDate.value
-        const data = {
-            username:user?.name,
-            email:user?.email,
-            image:user?.email,
-            ...studio,
-            departureDate:departureDate,
-            bookingDate:new Date()
+
+        if (!user) {
+            setBookingError("Please sign in to book a studio.")
+            return
         }
-        const res = await fetch(`http://localhost:8000/booking`,{
-            method: 'POST',
-            headers: {
-                'Content-Type':'application/json'
-            },
-            body:JSON.stringify(data)
-        })
-        const bookingData = await res.json()
-        console.log(bookingData)
+
+        const form = e.currentTarget
+        const departureDateInput = form.elements.namedItem(
+            "departureDate",
+        ) as HTMLInputElement | null
+        const departureDate = departureDateInput?.value
+
+        if (!departureDate) {
+            setBookingError("Please select a departure date.")
+            return
+        }
+
+        setIsBooking(true)
+        setBookingError(null)
+
+        const data = {
+            username: user.name ?? "",
+            email: user.email ?? "",
+            image: user.image ?? "",
+            ...studio,
+            departureDate,
+            bookingDate: new Date(),
+        }
+
+        try {
+            const res = await fetch(`http://localhost:8000/booking`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+
+            if (!res.ok) {
+                throw new Error(`Booking failed: ${res.status}`)
+            }
+
+            const bookingData = await res.json()
+            console.log(bookingData)
+
+            form.reset()
+            scrollToAvailability()
+        } catch (err) {
+            setBookingError(
+                err instanceof Error ? err.message : "Something went wrong.",
+            )
+        } finally {
+            setIsBooking(false)
+        }
     }
-    
+
 
 
 
@@ -146,16 +184,20 @@ const Booking = ({ studio }: BookingProps) => {
                         name="departureDate"
                         aria-label="Departure date"
                         className="mt-4"
+                        required
                     ></Input>
-                    <Link href={'/booking'}>
-                        <Button
-                            type="submit"
-                            onClick={scrollToAvailability}
-                            className="h-11 flex-1 rounded-xl bg-violet-600 px-6 font-semibold text-white shadow-md shadow-violet-600/30 hover:bg-violet-700"
-                        >
-                            Book Now
-                        </Button>
-                    </Link>
+                    {bookingError && (
+                        <p className="mt-2 text-sm text-red-600">
+                            {bookingError}
+                        </p>
+                    )}
+                    <Button
+                        type="submit"
+                        disabled={isBooking || !user}
+                        className="h-11 flex-1 rounded-xl bg-violet-600 px-6 font-semibold text-white shadow-md shadow-violet-600/30 hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                        {isBooking ? "Booking..." : "Book Now"}
+                    </Button>
                 </form>
                 <Button
                     type="button"
