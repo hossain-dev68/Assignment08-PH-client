@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense, cache } from "react"
 import { SearchX, TriangleAlert } from "lucide-react"
+import { headers } from "next/headers"
 
 import { StudioDetailView } from "@/components/studio-detail-view"
 import {
@@ -21,7 +22,13 @@ type StudioLoadResult =
 /** One fetch per request, shared by `generateMetadata` and the page. */
 const loadStudio = cache(async (id: string): Promise<StudioLoadResult> => {
   try {
-    const res = await fetch(`${DESTINATION_URL}/${id}`)
+     const res = await fetch(`${DESTINATION_URL}/${id}`,
+    // {
+    //   headers: {
+    //     authorization: 'user logged in'
+    //   }
+    // }
+    );
     if (!res.ok) {
       // The API answers non-2xx for ids it cannot find, so treat it as missing.
       return { status: "not-found" }
