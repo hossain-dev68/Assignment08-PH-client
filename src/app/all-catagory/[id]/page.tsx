@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/empty"
 import { Skeleton } from "@/components/ui/skeleton"
 import { DESTINATION_URL, type Studio } from "@/lib/studios"
+import { auth } from "@/lib/auth"
 
 type StudioLoadResult =
   | { status: "ok"; studio: Studio }
@@ -21,13 +22,19 @@ type StudioLoadResult =
 
 /** One fetch per request, shared by `generateMetadata` and the page. */
 const loadStudio = cache(async (id: string): Promise<StudioLoadResult> => {
+   const jwtToken = await auth.api.getToken({
+    headers: await headers()
+   });
+  const token = jwtToken?.token
   try {
      const res = await fetch(`${DESTINATION_URL}/${id}`,
-    // {
-    //   headers: {
-    //     authorization: 'user logged in'
-    //   }
-    // }
+      {
+        headers: {
+        authorization: `Bearer ${token}`
+      }
+
+
+  }
     );
     if (!res.ok) {
       // The API answers non-2xx for ids it cannot find, so treat it as missing.

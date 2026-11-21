@@ -44,6 +44,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { toast, Toaster } from "@/components/ui/toast"
 import { HowItWorks } from "@/components/how-it-works"
+import { authClient } from "@/lib/auth-client"
 
 type ExtraField = {
   key: string
@@ -571,10 +572,15 @@ export default function CreateStudio() {
     try {
       const imageUrls = await Promise.all(images.map(toPayloadImage))
 
+      const {data, error} = await authClient.token()
+
+      const token = data?.token
+
       const res = await fetch("http://localhost:8000/create-studio", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ ...form, images: imageUrls }),
       })
@@ -583,13 +589,13 @@ export default function CreateStudio() {
         throw new Error(`Request failed with status ${res.status}`)
       }
 
-      let data: unknown = null
+      let result: unknown = null
       try {
-        data = await res.json()
+        result = await res.json()
       } catch {
         // Backend may return an empty body — nothing to parse.
       }
-      console.log(data)
+      console.log(result)
 
       toast.add({
         type: "success",

@@ -18,7 +18,6 @@ import {
 
 const navLinks = [
   { label: "Home", href: "/", active: true },
-  { label: "Explore", href: "/explore", active: false },
   { label: "All-Catagory", href: "/all-catagory", active: false },
   { label: "Create Studio", href: "/create-studio", active: false },
   { label: "My Booking", href: "/mybooking", active: false },
