@@ -36,7 +36,7 @@ export const studioCategories: StudioCategory[] = [
   { label: "Art Workshops", value: "Art Workshops", icon: Palette },
 ]
 
-export const DESTINATION_URL = "http://localhost:8000/destination"
+export const DESTINATION_URL = `${process.env.NEXT_PUBLIC_API_URL}/destination`
 export const STUDIOS_PER_PAGE = 6
 
 /** Reads the first value of a (possibly repeated) search param. */

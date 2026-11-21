@@ -576,7 +576,7 @@ export default function CreateStudio() {
 
       const token = data?.token
 
-      const res = await fetch("http://localhost:8000/create-studio", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/create-studio`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
