@@ -27,7 +27,7 @@ const loadStudio = cache(async (id: string): Promise<StudioLoadResult> => {
    });
   const token = jwtToken?.token
   try {
-     const res = await fetch(`${DESTINATION_URL}/${id}`,
+     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destination/${id}`,
       {
         headers: {
         authorization: `Bearer ${token}`
